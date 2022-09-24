@@ -51,3 +51,4 @@
 (package! delight)
 (package! company-lsp)
 (package! ccls)
+(package! undo-fu)

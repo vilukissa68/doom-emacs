@@ -114,3 +114,10 @@
 (global-hl-line-mode)                             ; Hightlight current line
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parent
+
+;; Keyboard remapping
+(map! :leader
+      :desc "Open like spacemacs" "SPC" 'execute-extended-command)
+
+;; lsp optimization
+(setq lsp-use-plists t)
