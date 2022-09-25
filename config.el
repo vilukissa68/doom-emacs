@@ -121,3 +121,52 @@
 
 ;; lsp optimization
 (setq lsp-use-plists t)
+
+;; LSP and autocompletion
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook ((prog-mode . lsp)
+        (lsp-mode . lsp-enable-which-key-integration))
+  :custom
+  (lsp-enable-folding nil)
+  (read-process-output-max (* 1024 1024)))
+
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package company-lsp)
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay 0.5)
+  (company-minimum-prefix-length 1)
+  (company-show-quick-access t)
+  (company-tooltip-align-annotations 't))
+
+(use-package company-box
+  :if (display-graphic-p)
+  :after company
+  :hook (company-mode . company-box-mode))
+
+;; Debugger
+(use-package dap-mode
+  :after lsp-mode
+  :config
+  (dap-mode t)
+  (dap-ui-mode t))
+
+;; C/C++
+(use-package ccls
+  :after projectile
+  :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp-deferred)
+  :ensure-system-package ccls
+  :custom
+  (ccls-args nil)
+  (ccls-executable (executable-find "ccls"))
+  (projectile-project-root-files-top-down-recurring
+   (append '("compile_commands.json" ".ccls")
+           projectile-project-root-files-top-down-recurring))
+  :config (push ".ccls-cache" projectile-globally-ignored-directories))

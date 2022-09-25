@@ -52,3 +52,5 @@
 (package! company-lsp)
 (package! ccls)
 (package! undo-fu)
+(package! company-box)
+(package! dap-mode)
