@@ -54,3 +54,4 @@
 (package! undo-fu)
 (package! company-box)
 (package! dap-mode)
+(package! consult-lsp)

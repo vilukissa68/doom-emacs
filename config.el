@@ -119,21 +119,23 @@
 (map! :leader
       :desc "Open like spacemacs" "SPC" 'execute-extended-command)
 
-;; lsp optimization
-(setq lsp-use-plists t)
-
 ;; LSP and autocompletion
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook ((prog-mode . lsp)
+  :hook ((c-mode . lsp-deferred)
+        (c++-mode . lsp-deferred)
+        (python-mode . lsp-deferred)
         (lsp-mode . lsp-enable-which-key-integration))
   :custom
   (lsp-enable-folding nil)
+  (setq lsp-use-plists t) ;; Really nice optimization
   (read-process-output-max (* 1024 1024)))
-
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode))
+
+(use-package consult-lsp
+  :commands (consult-lsp-diagnostics consult-lsp-symbols))
 
 (use-package company-lsp)
 (use-package company
@@ -170,3 +172,5 @@
    (append '("compile_commands.json" ".ccls")
            projectile-project-root-files-top-down-recurring))
   :config (push ".ccls-cache" projectile-globally-ignored-directories))
+
+;; Elisp
