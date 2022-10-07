@@ -49,6 +49,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! delight)
+(package! use-package-ensure-system-package)
 (package! company-lsp)
 (package! ccls)
 (package! undo-fu)

@@ -173,4 +173,6 @@
            projectile-project-root-files-top-down-recurring))
   :config (push ".ccls-cache" projectile-globally-ignored-directories))
 
-;; Elisp
+(use-package flycheck
+  :custom
+  (setq flycheck-clang-include-path (list (expand-file-name "~/esp/esp-idf/components/freertos/include/freertos"))))
