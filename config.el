@@ -160,7 +160,7 @@
   (dap-mode t)
   (dap-ui-mode t))
 
-;; C/C++
+;;C/C++ 
 (use-package ccls
   :after projectile
   :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp-deferred)
@@ -173,6 +173,12 @@
            projectile-project-root-files-top-down-recurring))
   :config (push ".ccls-cache" projectile-globally-ignored-directories))
 
+(add-hook 'c-mode-hook
+          (lambda () (setq flycheck-clang-include-path
+                            '("/usr/lib/modules/6.0.2-arch1-1/build/include"
+                                  "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include"
+                                  "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated"))))
+
 (use-package flycheck
   :custom
-  (setq flycheck-clang-include-path (list (expand-file-name "~/esp/esp-idf/components/freertos/include/freertos"))))
+  (setq flycheck-clang-includes '("~/esp/esp-idf/components/freertos/include/freertos" "/usr/lib/modules/6.0.2-arch1-1/build/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated")))
