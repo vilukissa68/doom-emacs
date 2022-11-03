@@ -119,66 +119,16 @@
 (map! :leader
       :desc "Open like spacemacs" "SPC" 'execute-extended-command)
 
-;; LSP and autocompletion
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook ((c-mode . lsp-deferred)
-        (c++-mode . lsp-deferred)
-        (python-mode . lsp-deferred)
-        (lsp-mode . lsp-enable-which-key-integration))
-  :custom
-  (lsp-enable-folding nil)
-  (setq lsp-use-plists t) ;; Really nice optimization
-  (read-process-output-max (* 1024 1024)))
+(setq lsp-clients-clangd-args '("-j=3"
+				"--background-index"
+				"--clang-tidy"
+				"--completion-style=detailed"
+				"--header-insertion=never"
+				"--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
-
-(use-package consult-lsp
-  :commands (consult-lsp-diagnostics consult-lsp-symbols))
-
-(use-package company-lsp)
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :custom
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay 0.5)
-  (company-minimum-prefix-length 1)
-  (company-show-quick-access t)
-  (company-tooltip-align-annotations 't))
-
-(use-package company-box
-  :if (display-graphic-p)
-  :after company
-  :hook (company-mode . company-box-mode))
-
-;; Debugger
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-mode t)
-  (dap-ui-mode t))
-
-;;C/C++ 
-(use-package ccls
-  :after projectile
-  :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp-deferred)
-  :ensure-system-package ccls
-  :custom
-  (ccls-args nil)
-  (ccls-executable (executable-find "ccls"))
-  (projectile-project-root-files-top-down-recurring
-   (append '("compile_commands.json" ".ccls")
-           projectile-project-root-files-top-down-recurring))
-  :config (push ".ccls-cache" projectile-globally-ignored-directories))
-
-(add-hook 'c-mode-hook
-          (lambda () (setq flycheck-clang-include-path
-                            '("/usr/lib/modules/6.0.2-arch1-1/build/include"
-                                  "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include"
-                                  "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated"))))
-
-(use-package flycheck
-  :custom
-  (setq flycheck-clang-includes '("~/esp/esp-idf/components/freertos/include/freertos" "/usr/lib/modules/6.0.2-arch1-1/build/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated")))
+;; Flycheck linux includes
+(add-hook 'c-mode-hook (lambda () (setq flycheck-clang-include-path '("/usr/lib/modules/6.0.6-arch1-1/build/include"
+                                  "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include"
+                                  "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include/generated"))))
+(setq flycheck-clang-includes '("~/esp/esp-idf/components/freertos/include/freertos" "/usr/lib/modules/6.0.2-arch1-1/build/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated"))
