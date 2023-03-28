@@ -132,3 +132,15 @@
                                   "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include"
                                   "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include/generated"))))
 (setq flycheck-clang-includes '("~/esp/esp-idf/components/freertos/include/freertos" "/usr/lib/modules/6.0.2-arch1-1/build/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated"))
+
+;; Copilot
+ (use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-k" . 'copilot-previous-completion)
+              ("C-j" . 'copilot-next-completion)
+              ))

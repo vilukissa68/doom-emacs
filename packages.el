@@ -50,3 +50,6 @@
 ;(unpin! t)
 (package! delight)
 (package! use-package-ensure-system-package)
+
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
