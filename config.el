@@ -1,103 +1,18 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 
-
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-;;
-;;   (after! PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-
-;; Enable use-package
-(setq package-archives '(("elpa" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(use-package delight :ensure t)
-(use-package use-package-ensure-system-package :ensure t)
-
 ;; Sensible defaults
-(setq-default
+(setq
  ad-redefinition-action 'accept                   ; Silence warnings for redefinition
  cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
- display-time-default-load-average nil            ; Don't display load average
+ confirm-kill-emacs nil
  fill-column 80                                   ; Set width for automatic line breaks
  help-window-select t                             ; Focus new help windows when opened
  indent-tabs-mode nil                             ; Prefer spaces over tabs
- inhibit-startup-screen t                         ; Disable start-up screen
  initial-scratch-message ""                       ; Empty the initial *scratch* buffer
- kill-ring-max 128                                ; Maximum length of kill ring
  load-prefer-newer t                              ; Prefer the newest version of a file
  mark-ring-max 128                                ; Maximum length of mark ring
  read-process-output-max (* 1024 1024)            ; Increase the amount of data reads from the process
@@ -105,8 +20,6 @@
  select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
  tab-width 4                                      ; Set width for tabs
  use-package-always-ensure t                      ; Avoid the :ensure keyword for each package
- user-full-name "Terencio Agozzino"               ; Set the full name of the current user
- user-mail-address "terencio.agozzino@gmail.com"  ; Set the email address of the current user
  vc-follow-symlinks t                             ; Always follow the symlinks
  view-read-only t)                                ; Always open read-only buffers in view-mode
 (column-number-mode 1)                            ; Show the column number
@@ -115,23 +28,15 @@
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parent
 
-;; Keyboard remapping
+;; General keybindings
 (map! :leader
-      :desc "Open like spacemacs" "SPC" 'execute-extended-command)
+      :desc "Open like spacemacs" "SPC" 'execute-extended-command
+      (:prefix "f"
+               :desc "Toggle treemacs" "t" #'treemacs))
 
-(setq lsp-clients-clangd-args '("-j=3"
-				"--background-index"
-				"--clang-tidy"
-				"--completion-style=detailed"
-				"--header-insertion=never"
-				"--header-insertion-decorators=0"))
-(after! lsp-clangd (set-lsp-priority! 'clangd 2))
-
-;; Flycheck linux includes
-(add-hook 'c-mode-hook (lambda () (setq flycheck-clang-include-path '("/usr/lib/modules/6.0.6-arch1-1/build/include"
-                                  "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include"
-                                  "/usr/lib/modules/6.0.6-arch1-1/build/arch/x86/include/generated"))))
-(setq flycheck-clang-includes '("~/esp/esp-idf/components/freertos/include/freertos" "/usr/lib/modules/6.0.2-arch1-1/build/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include" "/usr/lib/modules/6.0.2-arch1-1/build/arch/x86/include/generated"))
+;; Faster which key
+(after! which-key
+  (setq which-key-idle-delay 0.1))
 
 ;; Copilot
  (use-package! copilot
@@ -144,3 +49,147 @@
               ("C-k" . 'copilot-previous-completion)
               ("C-j" . 'copilot-next-completion)
               ))
+
+;; Lsp
+(after! lsp-mode
+  (setq lsp-auto-guess-root nil)) ;; Dont guess root
+
+;; Python
+(after! python-mode
+  (setq python-shell-interpreter "python3"))
+
+;; C/C++
+(setq lsp-clients-clangd-args '("-j=4"
+				"--background-index"
+				"--clang-tidy"
+				"--completion-style=detailed"
+				"--header-insertion=never"
+				"--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+
+;; Debugger
+ (map! :map dap-mode-map
+      :leader
+      :prefix ("d" . "dap")
+      ;; basics
+      :desc "dap next"          "n" #'dap-next
+      :desc "dap step in"       "i" #'dap-step-in
+      :desc "dap step out"      "o" #'dap-step-out
+      :desc "dap continue"      "c" #'dap-continue
+      :desc "dap hydra"         "h" #'dap-hydra
+      :desc "dap debug restart" "r" #'dap-debug-restart
+      :desc "dap debug"         "s" #'dap-debug
+
+      ;; debug
+      :prefix ("dd" . "Debug")
+      :desc "dap debug recent"  "r" #'dap-debug-recent
+      :desc "dap debug last"    "l" #'dap-debug-last
+
+      ;; eval
+      :prefix ("de" . "Eval")
+      :desc "eval"                "e" #'dap-eval
+      :desc "eval region"         "r" #'dap-eval-region
+      :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+      :desc "add expression"      "a" #'dap-ui-expressions-add
+      :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+      :prefix ("db" . "Breakpoint")
+      :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+      :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+      :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+      :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
+
+;; Doom themes fix to prevent extra screen buffering with treemacs
+;; https://github.com/emacs-lsp/dap-mode/issues/374
+(after! doom-themes-ext-treemacs
+  (with-eval-after-load 'treemacs
+    (remove-hook 'treemacs-mode-hook #'doom-themes-hide-fringes-maybe)
+    (advice-remove #'treemacs-select-window #'doom-themes-hide-fringes-maybe)))
+
+(after! dap-mode
+    ;; Python support via debugpu: pip install debugpy --user
+    (setq dap-python-debugger 'debugpy)
+    (setq dap-python-executable "python3")
+
+    (setq dap-auto-configure-features '(breakpoints locals expressions tooltip)
+          ;dap-auto-show-output nil ;; Hide the annoying server output
+          lsp-enable-dap-auto-configure t)
+
+    ;; Automatically trigger dap-hydra when a program hits a breakpoint.
+    (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
+
+    ;; Automatically delete session and close dap-hydra when the debug session terminates.
+    (add-hook 'dap-terminated-hook
+              (lambda (arg)
+                (call-interactively #'dap-delete-session)
+                (dap-hydra/nil)))
+
+    (add-hook! +dap-running-session-mode
+      (set-window-buffer nil (current-buffer))))
+
+;; C/C++ debugging
+(after! realgud
+  (require 'hydra)
+
+  (defun +realgud:cmd-start (arg)
+    "start = break main + run"
+    (interactive "p")
+    (realgud-command "start"))
+
+  (defun +realgud:cmd-reverse-step (arg)
+    "reverse-step step"
+    (interactive "p")
+    (realgud-command "reverse-step"))
+
+  (defun +realgud:cmd-reverse-continue (arg)
+    "Reverse continue"
+    (interactive "p")
+    (realgud-command "reverse-continue"))
+
+  (defun +realgud:cmd-reverse-finish (arg)
+    "Reverse finish"
+    (interactive "p")
+    (realgud-command "reverse-finish"))
+
+  (defhydra realgud-hydra (:color pink :hint nil :foreign-keys run)
+    "
+Stepping | _n_: next | _i_: step | _o_: finish | _c_: continue | _R_: restart | _u_: until-here
+Reverse | _rn_: next | _ri_: step | _ro_: finish | _rc_: continue |
+Breakpts | _ba_: break | _bD_: delete | _bt_: tbreak | _bd_: disable | _be_: enable | _tr_: backtrace
+Eval | _ee_: at-point | _er_: region | _eE_: eval | 37 | _!_: shell | _Qk_: kill | _Qq_: quit | _Sg_: gdb | _Ss_: start
+"
+        ("n" realgud:cmd-next)
+        ("i" realgud:cmd-step)
+        ("o" realgud:cmd-finish)
+        ("c" realgud:cmd-continue)
+        ("R" realgud:cmd-restart)
+        ("u" realgud:cmd-until-here)
+        ("rn" +realgud:cmd-reverse-next)
+        ("ri" +realgud:cmd-reverse-step)
+        ("ro" +realgud:cmd-reverse-finish)
+        ("rc" +realgud:cmd-reverse-continue)
+        ("ba" realgud:cmd-break)
+        ("bt" realgud:cmd-tbreak)
+        ("bD" realgud:cmd-delete)
+        ("be" realgud:cmd-enable)
+        ("bd" realgud:cmd-disable)
+        ("ee" realgud:cmd-eval-at-point)
+        ("er" realgud:cmd-eval-region)
+        ("tr" realgud:cmd-backtrace)
+        ("eE" realgud:cmd-eval)
+        ("!" realgud:cmd-shell)
+        ("Qk" realgud:cmd-kill)
+        ("Sg" realgud:cmd-gdb)
+        ("Ss" +realgud:cmd-start)
+        ("q" nil "cancel" :color blue)
+        ("Qq" realgud:cmd-quit "quit" :color blue))
+
+    (defun +debugger/realgud:gdb-hydra ()
+      "Run `'realgud-hydra'."
+      (interactive)
+      (realgud-hydra/body))
+
+    (map! :leader :prefix ("l" . "custom")
+          (:when (modulep! :tools debugger)
+            :prefix ("d" . "debugger")
+            :desc "RealGUD hydra" "h" #'+debugger/realgud:gdb-hydra)))
