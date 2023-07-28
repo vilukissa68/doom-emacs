@@ -28,11 +28,21 @@
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parent
 
+;; Set font
+(setq doom-font (font-spec :family "Iosevka" :size 13.0))
+
+
 ;; General keybindings
 (map! :leader
       :desc "Open like spacemacs" "SPC" 'execute-extended-command
       (:prefix "f"
                :desc "Toggle treemacs" "t" #'treemacs))
+
+;; MacOS specific
+(setq default-input-method "MacOSX")
+(setq mac-option-key-is-meta t)
+(setq mac-right-option-modifier nil)
+
 
 ;; Faster which key
 (after! which-key
@@ -105,6 +115,10 @@
   (with-eval-after-load 'treemacs
     (remove-hook 'treemacs-mode-hook #'doom-themes-hide-fringes-maybe)
     (advice-remove #'treemacs-select-window #'doom-themes-hide-fringes-maybe)))
+
+;; Rust
+(after! rustic
+  (setq rustic-lsp-server 'rust-analyzer))
 
 (after! dap-mode
     ;; Python support via debugpu: pip install debugpy --user
