@@ -31,6 +31,12 @@
 ;; Set font
 (setq doom-font (font-spec :family "Iosevka" :size 13.0))
 
+;; Type accents with dead keys
+(define-key key-translation-map [dead-grave] "`")
+(define-key key-translation-map [dead-acute] "'")
+(define-key key-translation-map [dead-circumflex] "^")
+(define-key key-translation-map [dead-diaeresis] "\"")
+(define-key key-translation-map [dead-tilde] "~")
 
 ;; General keybindings
 (map! :leader
@@ -207,3 +213,12 @@ Eval | _ee_: at-point | _er_: region | _eE_: eval | 37 | _!_: shell | _Qk_: kill
           (:when (modulep! :tools debugger)
             :prefix ("d" . "debugger")
             :desc "RealGUD hydra" "h" #'+debugger/realgud:gdb-hydra)))
+
+;; Latex
+(after! latex-preview-pane
+  (setq pdf-latex-command "xelatex")
+  (setq +latex-viewers '(pdf-tools)))
+
+;; Haskell
+(after! haskell-mode
+  (setq haskell-stylish-on-save t))
