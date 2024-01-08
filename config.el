@@ -222,3 +222,25 @@ Eval | _ee_: at-point | _er_: region | _eE_: eval | 37 | _!_: shell | _Qk_: kill
 ;; Haskell
 (after! haskell-mode
   (setq haskell-stylish-on-save t))
+
+;; Ebooks
+(after! nov
+  (setq nov-text-width 80)
+  (map! :map nov-mode-map
+        "J" #'nov-scroll-up
+        "K" #'nov-scroll-down
+        "H" #'nov-history-back
+        "L" #'nov-history-forward
+        "C-c C-l" #'nov-display-table-of-contents
+
+        :leader
+        :prefix("m" . "nov")
+        :desc "next-document" "j" #'nov-next-document
+        :desc "previous-document" "k" #'nov-previous-document
+        :desc "goto-toc" "t" #'nov-goto-toc
+        :n ))
+
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Iosevka" :height 1.0))
+
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))

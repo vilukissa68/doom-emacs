@@ -53,3 +53,4 @@
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! haskell-mode)
 (package! lsp-haskell)
+(package! nov)
