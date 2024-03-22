@@ -1,8 +1,16 @@
 (setq doom-theme 'doom-one)
 
 (setq display-line-numbers-type t)
+(setq display-line-numbers-mode t)
 
-(setq org-directory "~/org/")
+(setq org-directory "~/Dropbox/orgfiles/")
+(setq org-default-notes-file "~/Dropbox/orgfiles/notes.org")
+(load-file "~/Dropbox/orgfiles/orgsetup.el")
+
+;; Open org folder
+(defun my-org-finder ()
+  (interactive)
+  (ido-find-file-in-dir org-directory))
 
 ;; Sensible defaults
 (setq
@@ -27,22 +35,19 @@
 (global-hl-line-mode)                             ; Hightlight current line
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parent
+(global-display-line-numbers-mode)
 
 ;; Set font
-(setq doom-font (font-spec :family "Iosevka" :size 13.0))
+(setq doom-font (font-spec :family "Iosevka" :size 12.0))
 
-;; Type accents with dead keys
-(define-key key-translation-map [dead-grave] "`")
-(define-key key-translation-map [dead-acute] "'")
-(define-key key-translation-map [dead-circumflex] "^")
-(define-key key-translation-map [dead-diaeresis] "\"")
-(define-key key-translation-map [dead-tilde] "~")
 
 ;; General keybindings
 (map! :leader
       :desc "Open like spacemacs" "SPC" 'execute-extended-command
       (:prefix "f"
-               :desc "Toggle treemacs" "t" #'treemacs))
+        :desc "Toggle treemacs" "t" #'treemacs
+        :desc "Open org directory" "o" 'my-org-finder
+        ))
 
 ;; MacOS specific
 (setq default-input-method "MacOSX")
@@ -55,16 +60,16 @@
   (setq which-key-idle-delay 0.1))
 
 ;; Copilot
- (use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)
-              ("C-k" . 'copilot-previous-completion)
-              ("C-j" . 'copilot-next-completion)
-              ))
+ ;; (use-package! copilot
+ ;;  :hook (prog-mode . copilot-mode)
+ ;;  :bind (:map copilot-completion-map
+ ;;              ("<tab>" . 'copilot-accept-completion)
+ ;;              ("TAB" . 'copilot-accept-completion)
+ ;;              ("C-TAB" . 'copilot-accept-completion-by-word)
+ ;;              ("C-<tab>" . 'copilot-accept-completion-by-word)
+ ;;              ("C-k" . 'copilot-previous-completion)
+ ;;              ("C-j" . 'copilot-next-completion)
+ ;;             ))
 
 ;; Lsp
 (after! lsp-mode
@@ -213,34 +218,3 @@ Eval | _ee_: at-point | _er_: region | _eE_: eval | 37 | _!_: shell | _Qk_: kill
           (:when (modulep! :tools debugger)
             :prefix ("d" . "debugger")
             :desc "RealGUD hydra" "h" #'+debugger/realgud:gdb-hydra)))
-
-;; Latex
-(after! latex-preview-pane
-  (setq pdf-latex-command "xelatex")
-  (setq +latex-viewers '(pdf-tools)))
-
-;; Haskell
-(after! haskell-mode
-  (setq haskell-stylish-on-save t))
-
-;; Ebooks
-(after! nov
-  (setq nov-text-width 80)
-  (map! :map nov-mode-map
-        "J" #'nov-scroll-up
-        "K" #'nov-scroll-down
-        "H" #'nov-history-back
-        "L" #'nov-history-forward
-        "C-c C-l" #'nov-display-table-of-contents
-
-        :leader
-        :prefix("m" . "nov")
-        :desc "next-document" "j" #'nov-next-document
-        :desc "previous-document" "k" #'nov-previous-document
-        :desc "goto-toc" "t" #'nov-goto-toc
-        :n ))
-
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Iosevka" :height 1.0))
-
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))

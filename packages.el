@@ -51,6 +51,6 @@
 
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
-(package! haskell-mode)
-(package! lsp-haskell)
-(package! nov)
+
+(package! sly-overlay
+  :recipe (:host sourcehut :repo "fosskers/sly-overlay"))
