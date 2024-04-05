@@ -12,6 +12,11 @@
   (interactive)
   (ido-find-file-in-dir org-directory))
 
+;; OSX Fix for EPG
+(setq epg-pinentry-mode 'loopback)
+(epa-file-enable)
+(setq epg-gpg-program "/opt/homebrew/Cellar/gnupg/2.4.0/bin/gpg")
+
 ;; Sensible defaults
 (setq
  ad-redefinition-action 'accept                   ; Silence warnings for redefinition
@@ -36,6 +41,7 @@
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parent
 (global-display-line-numbers-mode)
+(which-function-mode)
 
 ;; Set font
 (setq doom-font (font-spec :family "Iosevka" :size 12.0))
@@ -43,11 +49,30 @@
 
 ;; General keybindings
 (map! :leader
-      :desc "Open like spacemacs" "SPC" 'execute-extended-command
-      (:prefix "f"
+      :desc "Open like spacemacs" "SPC" 'execute-extended-command)
+
+(map! :leader
+      (:prefix ("f". "files")
         :desc "Toggle treemacs" "t" #'treemacs
-        :desc "Open org directory" "o" 'my-org-finder
-        ))
+        :desc "Open org directory" "o" 'my-org-finder))
+
+(map! :leader
+      (:prefix ("i". "insert")
+        (:prefix ("t". "time")
+        :desc "Timestamp decimal" "td" 'insert-current-time-decimal)))
+
+(map! :leader
+        (:prefix ("j" . "jump")
+           :desc "Jump to declaration" "d" 'lsp-find-declaration
+           :desc "Jump with i menu" "i" 'imenu
+           :desc "Jump to references" "r" 'lsp-find-references
+           :desc "Jump to beginning of defun" "b" 'beginning-of-defun
+           :desc "Jump to end of defun" "e" 'end-of-defun
+           :desc "Jump back to previous pos" "h" 'evil-jump-backward
+           :desc "Jump back to swap pos" "s" 'evil-jump-backward-swap
+           :desc "Jump back to forward pos" "l" 'evil-jump-forward
+           :desc "Open occur buffer" "o" 'occur
+           ))
 
 ;; MacOS specific
 (setq default-input-method "MacOSX")
@@ -218,3 +243,21 @@ Eval | _ee_: at-point | _er_: region | _eE_: eval | 37 | _!_: shell | _Qk_: kill
           (:when (modulep! :tools debugger)
             :prefix ("d" . "debugger")
             :desc "RealGUD hydra" "h" #'+debugger/realgud:gdb-hydra)))
+
+
+;; Misc
+
+;; Write current time in HH.MM format in decimal
+(defun insert-current-time-decimal ()
+  "Insert the current time in decimal format at point."
+  (interactive)
+  (let* ((current-time (decode-time (current-time)))
+         (hour (nth 2 current-time))
+         (minute (nth 1 current-time))
+         (decimal-time (+ hour (/ minute 60.0))))
+    (insert (format "%.2f" decimal-time))))
+
+;; Occur mode
+(add-hook 'occur-hook
+          '(lambda ()
+             (switch-to-buffer-other-window "*Occur*")))
